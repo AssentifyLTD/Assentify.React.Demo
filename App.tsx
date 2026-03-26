@@ -51,18 +51,18 @@ function AppContent() {
       if (status === RESULTS.GRANTED) {
         console.log('Camera permission already granted');
        onInitialize(
-         'QwWzzKOYLkDzCLJ9lENlgvRQ1kmkKDv76KbJ9sPfr9Joxwj2DUuzC7htaZP89RqzgB9i9lHc4IpYOA7g',
-         '2937c91f-c905-434b-d13d-08dcc04755ec',
-         'E4BDD59C3B69A3F89AE8C756FCD67EBC72A45F405B256B3C3BDD643BE282B195'
+         '',
+         '',
+         ''
        );
       } else if (status === RESULTS.DENIED || status === RESULTS.BLOCKED) {
         const result = await request(cameraPermission);
         if (result === RESULTS.GRANTED) {
           console.log('Camera permission granted');
         onInitialize(
-          'QwWzzKOYLkDzCLJ9lENlgvRQ1kmkKDv76KbJ9sPfr9Joxwj2DUuzC7htaZP89RqzgB9i9lHc4IpYOA7g',
-          '2937c91f-c905-434b-d13d-08dcc04755ec',
-          'E4BDD59C3B69A3F89AE8C756FCD67EBC72A45F405B256B3C3BDD643BE282B195'
+          '',
+          '',
+          ''
         );
         } else {
           console.log('Camera permission denied');

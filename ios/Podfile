@@ -1,12 +1,11 @@
-# Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/react-native-permissions/scripts/setup'
 
-platform :ios, min_ios_version_supported
+platform :ios, '18.0'
 prepare_react_native_project!
+setup_permissions([
+  'Camera',
+])
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -14,21 +13,62 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+dynamic_frameworks = ['AssentifySdk', 'TensorFlowLiteSwift']
+
 target 'flowdemo' do
   config = use_native_modules!
 
+  use_frameworks!
+
   use_react_native!(
     :path => config[:reactNativePath],
-    # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  pod 'SVGKit', :git => 'https://github.com/jbagaresgaray/SVGKit.git', :branch => '3.x', :modular_headers => true
+  pod 'CocoaLumberjack', :modular_headers => true
+  pod 'Bugsnag', :modular_headers => true
+  pod 'BugsnagPerformance', :modular_headers => true
+  pod 'TensorFlowLiteSwift', '2.7.0'
 
   post_install do |installer|
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
+      :mac_catalyst_enabled => false
     )
   end
 end
+
+# Convert all permission pods into static libraries
+pre_install do |installer|
+  Pod::Installer::Xcode::TargetValidator.send(:define_method, :verify_no_static_framework_transitive_dependencies) {}
+
+  installer.pod_targets.each do |pod|
+    if pod.name.eql?('RNPermissions') || pod.name.start_with?('Permission-')
+      def pod.build_type;
+        # Uncomment the line corresponding to your CocoaPods version
+        # Pod::BuildType.static_library # >= 1.9
+        # Pod::Target::BuildType.static_library # < 1.9
+      end
+    end
+  end
+end
+
+pre_install do |installer|
+  installer.pod_targets.each do |pod|
+    if !dynamic_frameworks.include?(pod.name)
+      puts "Overriding the static_framework? method for #{pod.name}"
+      def pod.static_framework?
+        true
+      end
+
+      def pod.build_type
+        Pod::BuildType.static_library
+      end
+    end
+  end
+end
+
+
+

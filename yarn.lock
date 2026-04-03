@@ -2165,10 +2165,10 @@ asap@~2.0.6:
   resolved "https://registry.npmjs.org/asap/-/asap-2.0.6.tgz"
   integrity sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==
 
-assentify-sdk-react-native@1.0.0-Beta:
-  version "1.0.0-Beta"
-  resolved "https://registry.yarnpkg.com/assentify-sdk-react-native/-/assentify-sdk-react-native-1.0.0-Beta.tgz#82f0e8e289504ce9b5141ca79db60892a3538fc8"
-  integrity sha512-jQAChskv6vMmqJ8miLZ0LBnVzfzPQ4p21K+tC2nzqO8LWd+lHBhxbGoI6UI7ItMBhZVTfZ0JqGkywopbWN8N4Q==
+assentify-sdk-react-native@1.0.0-Beta.1:
+  version "1.0.0-Beta.1"
+  resolved "https://registry.yarnpkg.com/assentify-sdk-react-native/-/assentify-sdk-react-native-1.0.0-Beta.1.tgz#f91f73e4878eee362e404f8dba409ebbf0accab5"
+  integrity sha512-d0jeTuii6Qt2K6kzUEaiaB/6Pe4Pl5JujAfuVYWhF7crRcnm6EAUA5NQKlizW6zGXkOyeMB2Vo0fPU/aeP4zNw==
   dependencies:
     "@gorhom/bottom-sheet" "^4"
     eventemitter3 "^5.0.1"

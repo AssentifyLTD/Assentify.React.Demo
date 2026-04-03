@@ -5,13 +5,9 @@
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import { Button, DeviceEventEmitter, Alert, Platform } from 'react-native';
+import { StatusBar, useColorScheme, View ,   Text, Image, TouchableOpacity, StyleSheet,} from 'react-native';
+import {SafeAreaProvider,  useSafeAreaInsets,} from 'react-native-safe-area-context';
+import { Button, DeviceEventEmitter, Alert, Platform  } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { ActivityIndicator } from 'react-native';
@@ -53,17 +49,17 @@ function AppContent() {
        onInitialize(
          '',
          '',
-         ''
+        '',
        );
       } else if (status === RESULTS.DENIED || status === RESULTS.BLOCKED) {
         const result = await request(cameraPermission);
         if (result === RESULTS.GRANTED) {
           console.log('Camera permission granted');
-        onInitialize(
-          '',
-          '',
-          ''
-        );
+          onInitialize(
+         '',
+         '',
+        '',
+       );
         } else {
           console.log('Camera permission denied');
           Alert.alert(
@@ -86,8 +82,8 @@ function AppContent() {
       tenantIdentifier,
       instanceHash,
       false, // Active Perform Liveness Face
-      '#32a852', // Custom Color
-      false, // Enable Detect
+      '#E6BF00', // Custom Color
+      true, // Enable Detect
       undefined, // androidMotionCardLimit
       undefined, // androidMotionPassportLimit
       undefined, // iOSMotionCardsLimit
@@ -102,8 +98,8 @@ function AppContent() {
       1 ,// minRam
       2 ,// iOSMinRam
       6 , // minCPUCores
-      '#a83236',// manualClickColor
-      '#3a32a8',// countDownNumbersColor
+      '#E6BF00',// manualClickColor
+      '#E6BF00',// countDownNumbersColor
     );
   };
 
@@ -111,24 +107,24 @@ function AppContent() {
    // Start Flow 
   const startFlow = () => {
     Assentify.startFlow(
-                "https://i.postimg.cc/3xY0ybsp/icon-1-(1).png", // logoUrl
+                "", // logoUrl
                 "", // svgBackgroundImageUrl
-                "#000000", // textColor
-                "#000000", // secondaryTextColor
-                "#F2F2F2", // backgroundCardColor
-                "#833F89", // accentColor
-                ["#FFFFFF"], // backgroundColors
-                ["#833F89", "#C82B47"], // clickColors
-                90.0, // angleDegreesBackgroundColors
-                0.4, // holdUntilBackgroundColors
-                0.0, // angleDegreesClickColors
-                0.6, // holdUntilClickColors
-                BackgroundType.Color, // backgroundType
-                false, // clear
+                "", // textColor
+                "", // secondaryTextColor
+                "", // backgroundCardColor
+                "", // accentColor
+                undefined, // backgroundColors
+                [""], // clickColors
+                0.0, // angleDegreesBackgroundColors  90.0,
+                0.0, // holdUntilBackgroundColors  0.4
+                0.0, // angleDegreesClickColors  0.0
+                0.0, // holdUntilClickColors  0.6
+                BackgroundType.Image, // backgroundType
+                true, // clear
                 "en", // language
                 true, // enableNfc
                 true, // enableQr
-                { phoneNumber: "121212"} // blockLoaderCustomProperties
+                {} // blockLoaderCustomProperties { phoneNumber: "121212"}
               );
   };
 
@@ -159,48 +155,128 @@ function AppContent() {
         }
       );
   
+       const onStepCompleted = DeviceEventEmitter.addListener(
+            'OnStepCompleted',
+            (result) => {
+                     const  model = result.dataModel as FlowCompletedModel[]
+                   model.forEach((item, index) => {
+                     console.log(`onStepCompleted StepData ${index}:`, item.stepData);
+                     console.log(`onStepCompleted SubmitRequestModel ${index}:`, item.submitRequestModel);
+                   });
+                   }
+          );
+
    return () => {
       assentifySdkInit.remove();
       onFlowCompleted.remove();
+      onStepCompleted.remove();
     };
   }, []);
 
+
+
 return (
   <View style={styles.container}>
-    {isLoading === false ? (
-      <>
-       {isSdkInitialized === false && (
-          <>
-        <View style={styles.buttonWrapper}>
-          <Button title="Initialize KYC Flow " onPress={requestCameraPermission} />
-        </View>
-            </>
-        )}
-        {isSdkInitialized && (
-          <>
-              <View style={styles.buttonWrapper}>
-                <Button title="Flow 1" onPress={startFlow} />
-              </View>
-          </>
-        )}
-      </>
-    ) : (
-      <ActivityIndicator size="large" />
-    )}
+
+    {/* 🔹 APP BAR */}
+    <View style={styles.appBar}>
+      <Image source={{ uri: "https://image2url.com/r2/default/images/1774601396029-0d566673-586b-4d36-9f30-19704f88dba6.png" }} style={styles.appBarLogo} />
+      <Text style={styles.appBarTitle}>BOB Demo</Text>
+    </View>
+
+    {/* 🔹 CONTENT */}
+    <View style={styles.centerContent}>
+      {isLoading === false ? (
+        <>
+          {isSdkInitialized === false && (
+            <View style={styles.buttonWrapper}>
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={requestCameraPermission}
+              >
+                <Text style={styles.primaryButtonText}>
+                  Initialize KYC Flow
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {isSdkInitialized && (
+            <View style={styles.buttonWrapper}>
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={startFlow}
+              >
+                <Text style={styles.primaryButtonText}>Start Flow</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </>
+      ) : (
+        <ActivityIndicator size="large" color="#E6BF00" />
+      )}
+    </View>
+
   </View>
 );
+
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center', // vertical center
-    alignItems: 'center',     // horizontal center
-    paddingHorizontal: 20,
+    backgroundColor: '#2C2C2E',
   },
+
+  /* 🔹 APP BAR */
+  appBar: {
+    height: 90,
+    paddingTop: 10, // status bar spacing
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2C2C2E',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#3A3A3C',
+  },
+
+  appBarLogo: {
+    width: 50,
+    height: 40,
+    marginRight: 10,
+   // tintColor: '#E6BF00',
+  },
+
+  appBarTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+
+  /* 🔹 CENTER CONTENT */
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   buttonWrapper: {
-    marginVertical: 8,
-    width: '80%',
+    marginBottom: 12,
+  },
+
+  primaryButton: {
+    backgroundColor: '#E6BF00',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    minWidth: 180,
+    alignItems: 'center',
+  },
+
+  primaryButtonText: {
+    color: '#000000',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 
